@@ -1,33 +1,52 @@
 let pendingUrls = new Map();
+let handledTabs = new Set();
+let externalRequests = new Map();
 
-browser.tabs.onCreated.addListener(async (tab) => {
-  if (tab.url && tab.url !== "about:blank" && tab.url !== "about:newtab") {
-    if (tab.url.startsWith("about:") || tab.url.startsWith("moz-extension:")) {
-      return;
-    }
-    if (!tab.cookieStoreId || tab.cookieStoreId === "firefox-default") {
-      await handleExternalLink(tab.id, tab.url);
-    }
-  }
-});
+browser.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    if (details.type !== "main_frame") return;
+    if (details.tabId === -1) return;
+    if (details.originUrl || details.documentUrl) return;
+    
+    externalRequests.set(details.tabId, details.url);
+    setTimeout(() => externalRequests.delete(details.tabId), 5000);
+  },
+  { urls: ["http://*/*", "https://*/*"] }
+);
 
-browser.webNavigation.onBeforeNavigate.addListener(async (details) => {
+browser.webNavigation.onCommitted.addListener(async (details) => {
   if (details.frameId !== 0) return;
-  if (details.url.startsWith("about:") || 
-      details.url.startsWith("moz-extension:") ||
-      details.url.startsWith("data:")) {
+  if (handledTabs.has(details.tabId)) return;
+  
+  const markedUrl = externalRequests.get(details.tabId);
+  if (!markedUrl) return;
+  
+  if (details.transitionType === "typed") {
+    externalRequests.delete(details.tabId);
     return;
   }
+  
   try {
     const tab = await browser.tabs.get(details.tabId);
-    if ((!tab.cookieStoreId || tab.cookieStoreId === "firefox-default") && 
-        tab.url === "about:blank") {
+    if (tab.openerTabId !== undefined) {
+      externalRequests.delete(details.tabId);
+      return;
+    }
+    
+    if (!tab.cookieStoreId || tab.cookieStoreId === "firefox-default") {
+      handledTabs.add(details.tabId);
+      externalRequests.delete(details.tabId);
       await handleExternalLink(details.tabId, details.url);
     }
   } catch (e) {
-    console.log("Tab not found:", e);
+    externalRequests.delete(details.tabId);
   }
-}, { url: [{ schemes: ["http", "https", "ftp"] }] });
+}, { url: [{ schemes: ["http", "https"] }] });
+
+browser.tabs.onRemoved.addListener((tabId) => {
+  handledTabs.delete(tabId);
+  externalRequests.delete(tabId);
+});
 
 async function handleExternalLink(tabId, url) {
   const requestId = Date.now().toString();
