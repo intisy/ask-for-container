@@ -21,7 +21,8 @@ browser.webNavigation.onCommitted.addListener(async (details) => {
   const markedUrl = externalRequests.get(details.tabId);
   if (!markedUrl) return;
   
-  if (details.transitionType === "typed") {
+  const ignoredTransitions = ["typed", "keyword", "keyword_generated", "generated"];
+  if (ignoredTransitions.includes(details.transitionType)) {
     externalRequests.delete(details.tabId);
     return;
   }
