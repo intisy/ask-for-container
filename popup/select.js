@@ -50,27 +50,54 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
 });
 
+function createContainerElement(container) {
+  const div = document.createElement('div');
+  div.className = 'container-item';
+  div.dataset.id = container.cookieStoreId;
+
+  const iconDiv = document.createElement('div');
+  iconDiv.className = 'container-icon';
+  const color = containerColors[container.color] || container.colorCode || '#7c7c7d';
+  iconDiv.style.background = color + '20';
+  iconDiv.style.color = color;
+  iconDiv.textContent = containerIcons[container.icon] || '📦';
+
+  const nameSpan = document.createElement('span');
+  nameSpan.className = 'container-name';
+  nameSpan.textContent = container.name;
+
+  const arrowSpan = document.createElement('span');
+  arrowSpan.className = 'container-arrow';
+  arrowSpan.textContent = '→';
+
+  div.appendChild(iconDiv);
+  div.appendChild(nameSpan);
+  div.appendChild(arrowSpan);
+
+  div.addEventListener('click', () => openInContainer(container.cookieStoreId));
+  return div;
+}
+
 async function loadContainers() {
   try {
     const containers = await browser.runtime.sendMessage({ action: 'getContainers' });
+    containerList.textContent = '';
     if (containers && containers.length > 0) {
-      containerList.innerHTML = containers.map(container => `
-        <div class="container-item" data-id="${container.cookieStoreId}">
-          <div class="container-icon" style="background: ${containerColors[container.color] || container.colorCode || '#7c7c7d'}20; color: ${containerColors[container.color] || container.colorCode || '#7c7c7d'}">
-            ${containerIcons[container.icon] || '📦'}
-          </div>
-          <span class="container-name">${escapeHtml(container.name)}</span>
-          <span class="container-arrow">→</span>
-        </div>
-      `).join('');
-      containerList.querySelectorAll('.container-item').forEach(item => {
-        item.addEventListener('click', () => openInContainer(item.dataset.id));
+      containers.forEach(container => {
+        containerList.appendChild(createContainerElement(container));
       });
     } else {
-      containerList.innerHTML = '<div class="no-containers">No containers found. Create one below!</div>';
+      const noContainers = document.createElement('div');
+      noContainers.className = 'no-containers';
+      noContainers.textContent = 'No containers found. Create one below!';
+      containerList.appendChild(noContainers);
     }
   } catch (error) {
-    containerList.innerHTML = '<div class="no-containers">Error loading containers</div>';
+    containerList.textContent = '';
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'no-containers';
+    errorDiv.textContent = 'Error loading containers';
+    containerList.appendChild(errorDiv);
   }
 }
 
@@ -156,10 +183,4 @@ async function cancel() {
       requestId: requestId
     });
   } catch (error) {}
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
 }

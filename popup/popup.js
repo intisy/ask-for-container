@@ -30,23 +30,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   const containerList = document.getElementById('containerList');
   try {
     const containers = await browser.contextualIdentities.query({});
+    containerList.textContent = '';
     if (containers && containers.length > 0) {
-      containerList.innerHTML = containers.map(container => `
-        <div class="container-chip" style="border-color: ${containerColors[container.color] || '#7c7c7d'}40">
-          <span class="icon">${containerIcons[container.icon] || '📦'}</span>
-          <span>${escapeHtml(container.name)}</span>
-        </div>
-      `).join('');
+      containers.forEach(container => {
+        const chip = document.createElement('div');
+        chip.className = 'container-chip';
+        chip.style.borderColor = (containerColors[container.color] || '#7c7c7d') + '40';
+
+        const icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = containerIcons[container.icon] || '📦';
+
+        const name = document.createElement('span');
+        name.textContent = container.name;
+
+        chip.appendChild(icon);
+        chip.appendChild(name);
+        containerList.appendChild(chip);
+      });
     } else {
-      containerList.innerHTML = '<div class="no-containers">No containers yet</div>';
+      const noContainers = document.createElement('div');
+      noContainers.className = 'no-containers';
+      noContainers.textContent = 'No containers yet';
+      containerList.appendChild(noContainers);
     }
   } catch (error) {
-    containerList.innerHTML = '<div class="no-containers">Error loading containers</div>';
+    containerList.textContent = '';
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'no-containers';
+    errorDiv.textContent = 'Error loading containers';
+    containerList.appendChild(errorDiv);
   }
 });
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
