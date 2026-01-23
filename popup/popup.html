@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ask for Container</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header>
+      <h1>Ask for Container</h1>
+      <p class="subtitle">Intercept external links</p>
+    </header>
+    
+    <section class="status-section">
+      <div class="status-indicator active">
+        <span class="dot"></span>
+        <span>Extension Active</span>
+      </div>
+    </section>
+    
+    <section class="info-section">
+      <p>When you open a link from an external application, you'll be prompted to select which container to use.</p>
+    </section>
+    
+    <section class="containers-preview">
+      <h2>Your Containers</h2>
+      <div class="container-list" id="containerList">
+        <!-- Containers loaded here -->
+      </div>
+    </section>
+    
+    <footer>
+      <a href="https://support.mozilla.org/en-US/kb/containers" target="_blank" class="help-link">
+        Learn about Containers →
+      </a>
+    </footer>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

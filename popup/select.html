@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Container</title>
+  <link rel="stylesheet" href="select.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        </svg>
+      </div>
+      <h1>Open in Container</h1>
+      <p class="url-display" id="urlDisplay"></p>
+    </header>
+
+    <section class="containers-section">
+      <h2>Select a Container</h2>
+      <div class="container-list" id="containerList">
+        <!-- Containers will be loaded here -->
+      </div>
+    </section>
+
+    <section class="create-section" id="createSection">
+      <button class="toggle-create" id="toggleCreate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Create New Container
+      </button>
+      
+      <div class="create-form hidden" id="createForm">
+        <div class="form-group">
+          <label for="containerName">Name</label>
+          <input type="text" id="containerName" placeholder="Container name...">
+        </div>
+        
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-picker" id="colorPicker">
+            <button class="color-option selected" data-color="blue" style="--color: #37adff"></button>
+            <button class="color-option" data-color="turquoise" style="--color: #00c79a"></button>
+            <button class="color-option" data-color="green" style="--color: #51cd00"></button>
+            <button class="color-option" data-color="yellow" style="--color: #ffcb00"></button>
+            <button class="color-option" data-color="orange" style="--color: #ff9f00"></button>
+            <button class="color-option" data-color="red" style="--color: #ff613d"></button>
+            <button class="color-option" data-color="pink" style="--color: #ff4bda"></button>
+            <button class="color-option" data-color="purple" style="--color: #af51f5"></button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Icon</label>
+          <div class="icon-picker" id="iconPicker">
+            <button class="icon-option selected" data-icon="fingerprint" title="Fingerprint">🔒</button>
+            <button class="icon-option" data-icon="briefcase" title="Briefcase">💼</button>
+            <button class="icon-option" data-icon="dollar" title="Dollar">💰</button>
+            <button class="icon-option" data-icon="cart" title="Cart">🛒</button>
+            <button class="icon-option" data-icon="circle" title="Circle">⭕</button>
+            <button class="icon-option" data-icon="gift" title="Gift">🎁</button>
+            <button class="icon-option" data-icon="vacation" title="Vacation">🏖️</button>
+            <button class="icon-option" data-icon="food" title="Food">🍔</button>
+            <button class="icon-option" data-icon="fruit" title="Fruit">🍇</button>
+            <button class="icon-option" data-icon="pet" title="Pet">🐱</button>
+            <button class="icon-option" data-icon="tree" title="Tree">🌲</button>
+            <button class="icon-option" data-icon="chill" title="Chill">❄️</button>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" id="createContainerBtn">Create & Open</button>
+      </div>
+    </section>
+
+    <footer>
+      <button class="btn btn-secondary" id="noContainerBtn">Open without Container</button>
+      <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+    </footer>
+  </div>
+
+  <script src="select.js"></script>
+</body>
+</html>
