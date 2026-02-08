@@ -32,6 +32,7 @@ const containerIcons = {
 
 const urlDisplay = document.getElementById('urlDisplay');
 const containerList = document.getElementById('containerList');
+const containerSearch = document.getElementById('containerSearch');
 const toggleCreateBtn = document.getElementById('toggleCreate');
 const createForm = document.getElementById('createForm');
 const containerNameInput = document.getElementById('containerName');
@@ -43,8 +44,17 @@ const cancelBtn = document.getElementById('cancelBtn');
 
 let selectedColor = 'blue';
 let selectedIcon = 'fingerprint';
+let allContainers = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+  // Try to constrain window size from the popup side
+  try {
+    const win = await browser.windows.getCurrent();
+    if (win.width > 450 || win.height > 650) {
+      await browser.windows.update(win.id, { width: 400, height: 600 });
+    }
+  } catch (e) {}
+  
   urlDisplay.textContent = targetUrl || 'Unknown URL';
   await loadContainers();
   setupEventListeners();
@@ -81,18 +91,10 @@ function createContainerElement(container) {
 async function loadContainers() {
   try {
     const containers = await browser.runtime.sendMessage({ action: 'getContainers' });
-    containerList.textContent = '';
-    if (containers && containers.length > 0) {
-      containers.forEach(container => {
-        containerList.appendChild(createContainerElement(container));
-      });
-    } else {
-      const noContainers = document.createElement('div');
-      noContainers.className = 'no-containers';
-      noContainers.textContent = 'No containers found. Create one below!';
-      containerList.appendChild(noContainers);
-    }
+    allContainers = containers || [];
+    renderContainers(allContainers);
   } catch (error) {
+    allContainers = [];
     containerList.textContent = '';
     const errorDiv = document.createElement('div');
     errorDiv.className = 'no-containers';
@@ -101,7 +103,37 @@ async function loadContainers() {
   }
 }
 
+function renderContainers(containers) {
+  containerList.textContent = '';
+  if (containers.length > 0) {
+    containers.forEach(container => {
+      containerList.appendChild(createContainerElement(container));
+    });
+  } else {
+    const noContainers = document.createElement('div');
+    noContainers.className = 'no-containers';
+    noContainers.textContent = containerSearch.value.trim()
+      ? 'No matching containers'
+      : 'No containers found. Create one below!';
+    containerList.appendChild(noContainers);
+  }
+}
+
+function filterContainers() {
+  const query = containerSearch.value.trim().toLowerCase();
+  if (!query) {
+    renderContainers(allContainers);
+    return;
+  }
+  const filtered = allContainers.filter(c =>
+    c.name.toLowerCase().includes(query)
+  );
+  renderContainers(filtered);
+}
+
 function setupEventListeners() {
+  containerSearch.addEventListener('input', filterContainers);
+  
   toggleCreateBtn.addEventListener('click', () => {
     createForm.classList.toggle('hidden');
     if (!createForm.classList.contains('hidden')) {
