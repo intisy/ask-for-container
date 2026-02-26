@@ -1,6 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 const requestId = urlParams.get('requestId');
-const targetUrl = decodeURIComponent(urlParams.get('url') || '');
+const targetUrl = urlParams.get('url') || '';
 
 const containerColors = {
   blue: '#37adff',
