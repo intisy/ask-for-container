@@ -79,7 +79,7 @@ async function handleExternalLink(tabId, url) {
   const popupUrl = browser.runtime.getURL(`popup/select.html?requestId=${requestId}&url=${encodeURIComponent(url)}`);
 
   const width = 400;
-  const height = 600;
+  const height = 800;
 
   const createOptions = {
     url: popupUrl,

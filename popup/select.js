@@ -50,11 +50,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Try to constrain window size from the popup side
   try {
     const win = await browser.windows.getCurrent();
-    if (win.width > 450 || win.height > 650) {
-      await browser.windows.update(win.id, { width: 400, height: 600 });
+    if (win.width > 450 || win.height > 850) {
+      await browser.windows.update(win.id, { width: 400, height: 800 });
     }
-  } catch (e) {}
-  
+  } catch (e) { }
+
   urlDisplay.textContent = targetUrl || 'Unknown URL';
   await loadContainers();
   setupEventListeners();
@@ -133,14 +133,14 @@ function filterContainers() {
 
 function setupEventListeners() {
   containerSearch.addEventListener('input', filterContainers);
-  
+
   toggleCreateBtn.addEventListener('click', () => {
     createForm.classList.toggle('hidden');
     if (!createForm.classList.contains('hidden')) {
       containerNameInput.focus();
     }
   });
-  
+
   colorPicker.querySelectorAll('.color-option').forEach(btn => {
     btn.addEventListener('click', () => {
       colorPicker.querySelectorAll('.color-option').forEach(b => b.classList.remove('selected'));
@@ -148,7 +148,7 @@ function setupEventListeners() {
       selectedColor = btn.dataset.color;
     });
   });
-  
+
   iconPicker.querySelectorAll('.icon-option').forEach(btn => {
     btn.addEventListener('click', () => {
       iconPicker.querySelectorAll('.icon-option').forEach(b => b.classList.remove('selected'));
@@ -156,7 +156,7 @@ function setupEventListeners() {
       selectedIcon = btn.dataset.icon;
     });
   });
-  
+
   createContainerBtn.addEventListener('click', createAndOpen);
   containerNameInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') createAndOpen();
@@ -176,7 +176,7 @@ async function openInContainer(containerId) {
       containerId: containerId,
       url: targetUrl
     });
-  } catch (error) {}
+  } catch (error) { }
 }
 
 async function createAndOpen() {
@@ -195,7 +195,7 @@ async function createAndOpen() {
       icon: selectedIcon
     });
     await openInContainer(container.cookieStoreId);
-  } catch (error) {}
+  } catch (error) { }
 }
 
 async function openWithoutContainer() {
@@ -205,7 +205,7 @@ async function openWithoutContainer() {
       requestId: requestId,
       url: targetUrl
     });
-  } catch (error) {}
+  } catch (error) { }
 }
 
 async function cancel() {
@@ -214,5 +214,5 @@ async function cancel() {
       action: 'cancel',
       requestId: requestId
     });
-  } catch (error) {}
+  } catch (error) { }
 }

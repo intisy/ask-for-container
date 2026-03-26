@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Ask for Container",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Prompts to select or create a container when opening external links",
   "author": "Finn",
   "permissions": [
@@ -15,7 +15,9 @@
     "storage"
   ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": true
   },
   "browser_action": {
@@ -35,7 +37,9 @@
       "id": "ask-for-container@finn",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     }
   }
